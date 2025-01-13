@@ -1,0 +1,52 @@
+生产环境自动检测代码更新
+================================
+
+在生产环境中，我们通常会将前端代码打包成一个或多个文件，然后通过 CDN 或者其他方式引入到页面中。这样的好处是可以减少页面请求次数，提高页面加载速度。但是这样也带来了一个问题，就是当我们更新了前端代码后，用户需要手动刷新页面才能看到最新的效果。为了解决这个问题，我们可以通过前端脚本自动检测页面是否有更新，如果有更新则提示用户刷新页面。
+
+创建文件 ``auto-refresh.js`` 并添加以下代码：
+
+.. code-block:: javascript
+
+    (() => {
+        const DURATION = 1000 * 60 * 2; // 检查间隔时间 2 分钟
+        let lastSrcs = [];
+
+        // 获取最新页面的 script src
+        async function extractNewScripts() {
+        try {
+            const res = await fetch("/?t=" + Date.now());
+            const html = await res.text();
+            const srcs = Array.from(
+            html.matchAll(/<script.*?src=['"](.*?)['"].*?>/g)
+            ).map((match) => match[1]);
+            return srcs;
+        } catch (error) {
+            return [];
+        }
+
+        // 检查 script src 是否有更新
+        async function needUpdate() {
+        const srcs = await extractNewScripts();
+        // 第一次获取到的 srcs 为空，不刷新
+        if (lastSrcs.length === 0) {
+            lastSrcs = srcs;
+            return false;
+        }
+        return srcs.some((src) => !lastSrcs.includes(src));
+        }
+
+        function autoRefresh() {
+        needUpdate();
+        setTimeout(async () => {
+            const willUpdate = await needUpdate();
+            if (willUpdate) {
+            alert("检测到页面有更新，请刷新页面！");
+            window.location.reload();
+            } else {
+            autoRefresh();
+            }
+        }, DURATION);
+        }
+
+        autoRefresh();
+    })();
