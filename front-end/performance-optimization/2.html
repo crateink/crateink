@@ -94,41 +94,41 @@
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ref</span><span class="p">,</span><span class="w"> </span><span class="nx">onUnmounted</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;vue&quot;</span><span class="p">;</span>
 
 <span class="cm">/**</span>
-<span class="cm">* 延迟执行</span>
-<span class="cm">* @param {number} maxFrameCount 最大帧数</span>
-<span class="cm">* @returns {Function} 返回一个函数，接收一个参数 n，当帧数大于等于 n 时返回 true</span>
-<span class="cm">*/</span>
+<span class="cm"> * 延迟执行</span>
+<span class="cm"> * @param {number} maxFrameCount 最大帧数</span>
+<span class="cm"> * @returns {Function} 返回一个函数，接收一个参数 n，当帧数大于等于 n 时返回 true</span>
+<span class="cm"> */</span>
 <span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">useDefer</span><span class="p">(</span><span class="nx">maxFrameCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1000</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">frameCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ref</span><span class="p">(</span><span class="mf">0</span><span class="p">);</span>
-<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">rafId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">frameCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ref</span><span class="p">(</span><span class="mf">0</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">rafId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
 
-<span class="w">    </span><span class="kd">function</span><span class="w"> </span><span class="nx">updateFrameCount</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">function</span><span class="w"> </span><span class="nx">updateFrameCount</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nx">requestAnimationFrame</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">rafId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">frameCount</span><span class="p">.</span><span class="nx">value</span><span class="o">++</span><span class="p">;</span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">frameCount</span><span class="p">.</span><span class="nx">value</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="nx">maxFrameCount</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">rafId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">frameCount</span><span class="p">.</span><span class="nx">value</span><span class="o">++</span><span class="p">;</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">frameCount</span><span class="p">.</span><span class="nx">value</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="nx">maxFrameCount</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="p">;</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">        </span><span class="nx">updateFrameCount</span><span class="p">();</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="nx">updateFrameCount</span><span class="p">();</span>
 <span class="w">    </span><span class="p">});</span>
-<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">    </span><span class="nx">updateFrameCount</span><span class="p">();</span>
+<span class="w">  </span><span class="nx">updateFrameCount</span><span class="p">();</span>
 
-<span class="w">    </span><span class="nx">onUnmounted</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">onUnmounted</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nx">cancelAnimationFrame</span><span class="p">(</span><span class="nx">rafId</span><span class="p">);</span>
-<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">(</span><span class="nx">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">(</span><span class="nx">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">frameCount</span><span class="p">.</span><span class="nx">value</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="nx">n</span><span class="p">;</span>
-<span class="w">    </span><span class="p">};</span>
+<span class="w">  </span><span class="p">};</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>在组件中使用：</p>
 <div class="highlight-vue notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">template</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;</span><span class="nx">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="mf">1000</span><span class="s">&quot;</span> <span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;</span><span class="nx">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="mf">1000</span><span class="s">&quot;</span><span class="p">&gt;</span>
     <span class="p">&lt;</span><span class="nt">heavy-comp</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;</span><span class="nx">defer</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span><span class="s">&quot;</span><span class="p">&gt;</span><span class="cp">{{</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="cp">}}</span><span class="p">&lt;/</span><span class="nt">heavy-comp</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
 
 <span class="p">&lt;</span><span class="nt">script</span> <span class="na">setup</span><span class="p">&gt;</span>

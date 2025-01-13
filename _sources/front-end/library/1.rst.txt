@@ -1,2 +1,45 @@
-文件切片
+组装树结构
 ================================
+
+1. 采用递归的方式组装树结构
+
+.. note::
+  * 先决条件：必须要知道顶层 pid
+  * 缺陷：无法保证数据不会缺失
+  * 优势：数据层级清晰
+
+.. code-block:: javascript
+
+  const toTreeData = (data, pid, props = { id: 'id', pid: 'parent_id' }) => {
+    let { id: _id, pid: _pid } = props;
+    let arr = []
+    data.filter(obj => obj[_pid] == pid).forEach(obj => arr.push({ ...obj, children: toTreeData(data, obj[_id]) }))
+    return arr;
+  }
+
+1. 采用循环的方式组装树结构
+
+.. note::
+  * 先决条件：无
+  * 缺陷：数据层级不清晰
+  * 优势：数据不会缺失
+
+.. code-block:: javascript
+
+  const toTreeData = (data, props = { id: 'id', pid: 'parent_id' }) => {
+    const { id: _id, pid: _pid } = props;
+    const map = data.reduce((obj, item) => {
+      obj[item[_id]] = item;
+      return obj;
+    }, {})
+    let arr = [];
+    data.forEach(child => {
+      const mapItem = map[child[_pid]];
+      if (mapItem) {
+       (mapItem.children || (mapItem.children = [])).push(child);
+      } else {
+       arr.push(child)
+      }
+    })
+    return arr;
+  }

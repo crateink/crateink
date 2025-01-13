@@ -4,8 +4,8 @@
 这是我的个人网站，欢迎访问！
 
 .. toctree::
-    :maxdepth: 2
-    :glob:
+  :maxdepth: 2
+  :glob:
 
-    */index
-    *
+  */index
+  *

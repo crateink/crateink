@@ -91,47 +91,48 @@
 <p>在生产环境中，我们通常会将前端代码打包成一个或多个文件，然后通过 CDN 或者其他方式引入到页面中。这样的好处是可以减少页面请求次数，提高页面加载速度。但是这样也带来了一个问题，就是当我们更新了前端代码后，用户需要手动刷新页面才能看到最新的效果。为了解决这个问题，我们可以通过前端脚本自动检测页面是否有更新，如果有更新则提示用户刷新页面。</p>
 <p>创建文件 <code class="docutils literal notranslate"><span class="pre">auto-refresh.js</span></code> 并添加以下代码：</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">DURATION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1000</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">60</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2</span><span class="p">;</span><span class="w"> </span><span class="c1">// 检查间隔时间 2 分钟</span>
-<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">lastSrcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">DURATION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1000</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">60</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2</span><span class="p">;</span><span class="w"> </span><span class="c1">// 检查间隔时间 2 分钟</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">lastSrcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
 
-<span class="w">    </span><span class="c1">// 获取最新页面的 script src</span>
-<span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">extractNewScripts</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 获取最新页面的 script src</span>
+<span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">extractNewScripts</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s2">&quot;/?t=&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">());</span>
-<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">html</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">res</span><span class="p">.</span><span class="nx">text</span><span class="p">();</span>
-<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">srcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s2">&quot;/?t=&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">());</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">html</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">res</span><span class="p">.</span><span class="nx">text</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">srcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span>
 <span class="w">        </span><span class="nx">html</span><span class="p">.</span><span class="nx">matchAll</span><span class="p">(</span><span class="sr">/&lt;script.*?src=[&#39;&quot;](.*?)[&#39;&quot;].*?&gt;/g</span><span class="p">)</span>
-<span class="w">        </span><span class="p">).</span><span class="nx">map</span><span class="p">((</span><span class="nx">match</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">match</span><span class="p">[</span><span class="mf">1</span><span class="p">]);</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">srcs</span><span class="p">;</span>
+<span class="w">      </span><span class="p">).</span><span class="nx">map</span><span class="p">((</span><span class="nx">match</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">match</span><span class="p">[</span><span class="mf">1</span><span class="p">]);</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="nx">srcs</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">[];</span>
 <span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">    </span><span class="c1">// 检查 script src 是否有更新</span>
-<span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">needUpdate</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 检查 script src 是否有更新</span>
+<span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">needUpdate</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">srcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">extractNewScripts</span><span class="p">();</span>
 <span class="w">    </span><span class="c1">// 第一次获取到的 srcs 为空，不刷新</span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">lastSrcs</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">lastSrcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">srcs</span><span class="p">;</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">      </span><span class="nx">lastSrcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">srcs</span><span class="p">;</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">srcs</span><span class="p">.</span><span class="nx">some</span><span class="p">((</span><span class="nx">src</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="o">!</span><span class="nx">lastSrcs</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">src</span><span class="p">));</span>
-<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kd">function</span><span class="w"> </span><span class="nx">autoRefresh</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">function</span><span class="w"> </span><span class="nx">autoRefresh</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nx">needUpdate</span><span class="p">();</span>
 <span class="w">    </span><span class="nx">setTimeout</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">willUpdate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">needUpdate</span><span class="p">();</span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">willUpdate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">willUpdate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">needUpdate</span><span class="p">();</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">willUpdate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;检测到页面有更新，请刷新页面！&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">reload</span><span class="p">();</span>
-<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nx">autoRefresh</span><span class="p">();</span>
-<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
 <span class="w">    </span><span class="p">},</span><span class="w"> </span><span class="nx">DURATION</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">    </span><span class="nx">autoRefresh</span><span class="p">();</span>
+<span class="w">  </span><span class="nx">autoRefresh</span><span class="p">();</span>
 <span class="p">})();</span>
 </pre></div>
 </div>

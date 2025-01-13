@@ -1,0 +1,26 @@
+文件切片
+================================
+
+对大文件进行切片上传，可以将大文件切片后并发上传，提高上传速度。
+
+创建文件 ``cutFile.js``，内容如下：
+
+.. literalinclude:: assets/2/cutFile.js
+  :language: javascript
+
+
+创建文件 ``worker.js``，内容如下：
+
+.. literalinclude:: assets/2/worker.js
+  :language: javascript
+
+
+创建文件 ``createChunk.js``，内容如下：
+
+.. literalinclude:: assets/2/createChunk.js
+  :language: javascript
+
+使用方法如下：
+
+.. literalinclude:: assets/2/usage.js
+  :language: javascript
