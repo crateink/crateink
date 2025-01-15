@@ -14,5 +14,5 @@ insert_final_newline =  true
 [*.{rst,md}]
 indent_size = 2
 
-[*.{js,jsx,ts,tsx,vue}]
+[*.{js,jsx,ts,tsx,vue,html,css,scss,json,yml,yaml}]
 indent_size = 2
